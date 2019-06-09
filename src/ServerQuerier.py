@@ -1,4 +1,5 @@
 import valve.source.a2s
+import json
 
 
 class ServerQuerier:
@@ -6,7 +7,8 @@ class ServerQuerier:
     Query a Steam Server and store the response in a dictionary
     """
     def __init__(self, serverIP, queryPort):
-        self.__serverIP = serverIP
+        self.__serverIP = (serverIP.split(":")[0] if ":" in serverIP else serverIP)
+        self.__port = (serverIP.split(":")[1] if ":" in serverIP else None)
         self.__queryPort = queryPort
 
         self.__name = "Unknown Steam Server"
@@ -15,6 +17,8 @@ class ServerQuerier:
         self.__currentPlayers = "?"
         self.__maxPlayers = "?"
         self.__playerList = []
+
+        self.__dataDict = {}
 
 
     def getName(self):
@@ -44,15 +48,10 @@ class ServerQuerier:
 
     def getAll(self):
         """
-        Return a formatted string of all server information
-        :return:  all server info formatted
+        Get the dictionary of all collected server data
+        :return: a dictionary of server data
         """
-        allInfo = ("**__" + str(self.getName()) + "__** is playing **__" + str(self.getMap()) +
-               "**__ with a population of **__(" + str(self.getPopulation()) + ")__**\n" +
-               "**__PLAYER LIST:**__\n")
-        for player in self.getPlayerList():
-            allInfo += str(player) + ", "
-        return allInfo
+        return self.__dataDict
 
     def query(self):
         """
@@ -74,11 +73,16 @@ class ServerQuerier:
     def __writeToDictionary(self):
         """
         Write all gathered data to a dictionary that can be converted into a .json file
-        :return:  the created dictionary
         """
-        pass
+        self.__dataDict["IP"] = (str(self.__serverIP) + ":" + str(self.__port) if self.__port != None else self.__serverIP)
+        self.__dataDict["Query Port"] = self.__queryPort
+        self.__dataDict["Name"] = self.getName()
+        self.__dataDict["Game"] = self.getGame()
+        self.__dataDict["Map"] = self.getMap()
+        self.__dataDict["Population"] = self.getPopulation()
+        self.__dataDict["Player List"] = self.getPlayerList()
+        print(self.__dataDict)
 
 
-# test = ServerQuerier("66.151.138.224", 13305)
-# test.query()
-# print(test.getPlayerList())
+test = ServerQuerier("66.151.138.224:3170", 3172)
+test.query()
