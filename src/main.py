@@ -31,17 +31,14 @@ def queryServers():
     # save the collected data to a .json file
     writeToJson(serverDataDict)
 
-def test():
-    print("yo")
-
 
 def main():
     startTime = time.time()
     # 2 minute timer
     while True:
-        time.sleep(10)
+        time.sleep(120)
         queryServers()
 
 
-# queryServers()
+queryServers()
 main()
