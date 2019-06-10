@@ -2,12 +2,11 @@ from ServerQuerier import ServerQuerier
 
 import json
 import time
-import threading
-
 
 def writeToJson(serverDataDict):
-    with open("resources\\ServerQueryData.json") as outfile:
-        json.dump(serverDataDict, outfile)
+    with open("ServerQueryData.json", "w") as outfile:
+       print(serverDataDict)
+       json.dump(serverDataDict, outfile)
 
 
 def queryServers():
@@ -24,7 +23,7 @@ def queryServers():
     with open("C:\\Users\\raysp\\Desktop\\Python\\Personal\\BirbBot\\resources\\ServerConstructorInfo.json") as jsonFile:
         data = json.load(jsonFile)
         for server in data["Server Constructors"]:
-            servers.append(ServerQuerier(server["Address"], server["Query Port"]))
+            servers.append(ServerQuerier(server["IP"], server["Query Port"]))
     # query all servers in the server list and add the data that is gathered to a dictionary
     for server in servers:
         server.query()
@@ -32,18 +31,17 @@ def queryServers():
     # save the collected data to a .json file
     writeToJson(serverDataDict)
 
+def test():
+    print("yo")
+
 
 def main():
     startTime = time.time()
     # 2 minute timer
     while True:
-        timer = threading.Timer(120.0, queryServers)
-
-        # currentTime = time.time()
-        # if currentTime == startTime + 120:
-        #     startTime = currentTime
-        #     queryServers()
+        time.sleep(10)
+        queryServers()
 
 
-queryServers()
+# queryServers()
 main()
