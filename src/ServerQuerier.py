@@ -9,7 +9,7 @@ class ServerQuerier:
     def __init__(self, serverIP, queryPort):
         self.__serverIP = (serverIP.split(":")[0] if ":" in serverIP else serverIP)
         self.__port = (serverIP.split(":")[1] if ":" in serverIP else None)
-        self.__queryPort = queryPort
+        self.__queryPort = int(queryPort)
 
         self.__name = "Unknown Steam Server"
         self.__game = "Unknown Game"
@@ -84,5 +84,5 @@ class ServerQuerier:
         print(self.__dataDict)
 
 
-test = ServerQuerier("66.151.138.224:3170", 3172)
-test.query()
+# test = ServerQuerier("66.151.138.224", 3177)
+# test.query()
