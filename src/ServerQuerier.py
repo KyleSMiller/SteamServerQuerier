@@ -1,18 +1,16 @@
 import valve.source.a2s
 import valve.source.messages
-import json
 
 
 class ServerQuerier:
     """
     Query a Steam Server and store the response in a dictionary
     """
-    def __init__(self, serverIP, queryPort):
+    def __init__(self, serverIP, queryPort, name="Unknown Steam Server"):
         self.__serverIP = (serverIP.split(":")[0] if ":" in serverIP else serverIP)
         self.__port = (serverIP.split(":")[1] if ":" in serverIP else None)
         self.__queryPort = int(queryPort)
-
-        self.__name = "Unknown Steam Server"
+        self.__name = name
         self.__game = "Unknown Game"
         self.__map = "Unknown Map"
         self.__currentPlayers = "?"
@@ -79,6 +77,9 @@ class ServerQuerier:
             else:
                 print("Server " + str(self.__serverIP) + " exists, but "
                       + str(self.__queryPort) + " is not the correct query port.")
+            self.__dataDict["Status"] = "Offline"
+            self.__dataDict["Name"] = self.getName()
+
         except valve.source.NoResponseError as err:
             print(err)
             if self.__port is not None:
@@ -86,6 +87,9 @@ class ServerQuerier:
                       " is either offline, is not a steam server, or does not exist")
             else:
                 print("Server " + str(self.__serverIP) + " is either offline, is not a steam server, or does not exist")
+            self.__dataDict["Status"] = "Offline"
+            self.__dataDict["Name"] = self.getName()
+
 
 
     def __writeToDictionary(self):
@@ -94,6 +98,7 @@ class ServerQuerier:
         """
         self.__dataDict["IP"] = (str(self.__serverIP) + ":" + str(self.__port) if self.__port != None else self.__serverIP)
         self.__dataDict["Query Port"] = self.__queryPort
+        self.__dataDict["Status"] = "Online"
         self.__dataDict["Name"] = self.getName()
         self.__dataDict["Game"] = self.getGame()
         self.__dataDict["Map"] = self.getMap()
@@ -102,5 +107,5 @@ class ServerQuerier:
         print(self.__dataDict)
 
 
-test = ServerQuerier("66.151.138.224", 3172)
-test.query()
+# test = ServerQuerier("66.151.138.224:3170", 3172)
+# test.query()
