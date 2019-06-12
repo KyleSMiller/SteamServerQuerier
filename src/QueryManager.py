@@ -45,14 +45,7 @@ class QueryManager:
         :param writeToJson:  boolean to specify if the gathered data should be written to a .json file
         :param repeat:  boolean for if the process should operate in a periodic timer. True will call start()
         """
-        servers = []
-        # load server constructors and add them into the list of servers to query
-        with open(self.__serverConstructorFile) as jsonFile:
-            data = json.load(jsonFile)
-            for server in data["Server Constructors"]:
-                servers.append(ServerQuerier(server["IP"], server["Query Port"]))
-            jsonFile.close()
-        # query all servers in the server list and add the data that is gathered to a dictionary
+        servers = self.__parseServerConstructors()
         self.__serverData["Server Data"] = []  # clear the file before adding new data
         for server in servers:
             server.query()
@@ -61,3 +54,17 @@ class QueryManager:
             self.writeToJson(self.__outputFile)
         if repeat:
             self.start(writeToJson)  # make the timer run periodically
+
+
+    def __parseServerConstructors(self):
+        """
+        Parse the .json server constructors and create ServerQuery objects from them
+        :return:  a list of created ServerQuery objects
+        """
+        servers = []
+        with open(self.__serverConstructorFile) as jsonFile:
+            data = json.load(jsonFile)
+            for server in data["Server Constructors"]:
+                servers.append(ServerQuerier(server["IP"], server["Query Port"], server["Name"]))
+            jsonFile.close()
+        return servers
