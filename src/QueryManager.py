@@ -65,6 +65,6 @@ class QueryManager:
         with open(self.__serverConstructorFile) as jsonFile:
             data = json.load(jsonFile)
             for server in data["Server Constructors"]:
-                servers.append(ServerQuerier(server["IP"], server["Query Port"], server["Name"]))
+                servers.append(ServerQuerier(server["IP"], server["Query Port"], server["Name"], game=server["Game"]))
             jsonFile.close()
         return servers

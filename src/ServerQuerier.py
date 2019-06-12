@@ -6,12 +6,12 @@ class ServerQuerier:
     """
     Query a Steam Server and store the response in a dictionary
     """
-    def __init__(self, serverIP, queryPort, name="Unknown Steam Server"):
+    def __init__(self, serverIP, queryPort, name="Unknown Steam Server", game="Unknown Game"):
         self.__serverIP = (serverIP.split(":")[0] if ":" in serverIP else serverIP)
         self.__port = (serverIP.split(":")[1] if ":" in serverIP else None)
         self.__queryPort = int(queryPort)
         self.__name = name
-        self.__game = "Unknown Game"
+        self.__game = game
         self.__map = "Unknown Map"
         self.__currentPlayers = "?"
         self.__maxPlayers = "?"
@@ -77,8 +77,10 @@ class ServerQuerier:
             else:
                 print("Server " + str(self.__serverIP) + " exists, but "
                       + str(self.__queryPort) + " is not the correct query port.")
+            # give the data dict for the server the minimum amount of data needed to create a ServerInfo object
             self.__dataDict["Status"] = "Offline"
             self.__dataDict["Name"] = self.getName()
+            self.__dataDict["Game"] = self.getGame()
 
         except valve.source.NoResponseError as err:
             print(err)
@@ -87,8 +89,10 @@ class ServerQuerier:
                       " is either offline, is not a steam server, or does not exist")
             else:
                 print("Server " + str(self.__serverIP) + " is either offline, is not a steam server, or does not exist")
+            # give the data dict for the server the minimum amount of data needed to create a ServerInfo object
             self.__dataDict["Status"] = "Offline"
             self.__dataDict["Name"] = self.getName()
+            self.__dataDict["Game"] = self.getGame()
 
 
 
