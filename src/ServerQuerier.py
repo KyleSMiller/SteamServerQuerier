@@ -1,4 +1,5 @@
 import valve.source.a2s
+import valve.source.messages
 import json
 
 
@@ -59,16 +60,33 @@ class ServerQuerier:
         """
         self.__playerList = []  # clear the playerList
         serverAddress = (self.__serverIP, self.__queryPort)
-        with valve.source.a2s.ServerQuerier(serverAddress) as server:
-            info = server.info()
-            self.__name = "{server_name}".format(**info)
-            self.__game = "{game}".format(**info)
-            self.__map = "{map}".format(**info)
-            self.__currentPlayers = "{player_count}".format(**info)
-            self.__maxPlayers = "{max_players}".format(**info)
-            for player in server.players()["players"]:
-                self.__playerList.append(player)
-        self.__writeToDictionary()
+        try:
+            with valve.source.a2s.ServerQuerier(serverAddress) as server:
+                info = server.info()
+                self.__name = "{server_name}".format(**info)
+                self.__game = "{game}".format(**info)
+                self.__map = "{map}".format(**info)
+                self.__currentPlayers = "{player_count}".format(**info)
+                self.__maxPlayers = "{max_players}".format(**info)
+                for player in server.players()["players"]:
+                    self.__playerList.append(player)
+            self.__writeToDictionary()
+
+        except valve.source.messages.BrokenMessageError:
+            if self.__port is not None:
+                print("Server " + str(self.__serverIP) + ":" + str(self.__port) + " exists, but "
+                      + str(self.__queryPort) + " is not the correct query port.")
+            else:
+                print("Server " + str(self.__serverIP) + " exists, but "
+                      + str(self.__queryPort) + " is not the correct query port.")
+        except valve.source.NoResponseError as err:
+            print(err)
+            if self.__port is not None:
+                print("Server " + str(self.__serverIP) + ":" + str(self.__port) +
+                      " is either offline, is not a steam server, or does not exist")
+            else:
+                print("Server " + str(self.__serverIP) + " is either offline, is not a steam server, or does not exist")
+
 
     def __writeToDictionary(self):
         """
@@ -84,5 +102,5 @@ class ServerQuerier:
         print(self.__dataDict)
 
 
-# test = ServerQuerier("66.151.138.224", 3177)
-# test.query()
+test = ServerQuerier("66.151.138.224", 3172)
+test.query()
