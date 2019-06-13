@@ -67,7 +67,7 @@ class ServerQuerier:
                 self.__currentPlayers = "{player_count}".format(**info)
                 self.__maxPlayers = "{max_players}".format(**info)
                 for player in server.players()["players"]:
-                    self.__playerList.append(player)
+                    self.__playerList.append("{name}".format(**player))
             self.__writeToDictionary()
 
         except valve.source.messages.BrokenMessageError:
@@ -113,3 +113,5 @@ class ServerQuerier:
 
 # test = ServerQuerier("66.151.138.224:3170", 3172)
 # test.query()
+
+# TypeError: <valve.source.messages.PlayerEntry object at 0x0000026336EA4828> is not JSON serializable
