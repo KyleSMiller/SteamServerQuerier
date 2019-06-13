@@ -13,6 +13,7 @@ class QueryManager:
         self.__serverConstructorFile = serverConstructorFile
         self.__outputFile = outputFile
         self.__serverData = {"Server Data": []}
+        self.__queryInterval = 120
 
     def setQueryInterval(self, queryInterval):
         self.__queryInterval = queryInterval
@@ -26,12 +27,13 @@ class QueryManager:
     def getServerData(self):
         return self.__serverData
 
-    def start(self, queryInterval=120.0, writeToJson=True):
+    def start(self, queryInterval=120, writeToJson=True):
         """
         begin the timer to query a series of steam servers
         :param writeToJson:  boolean to specify if the gathered data should be written to a .json file
         """
-        time.sleep(queryInterval)
+        self.__queryInterval = queryInterval
+        time.sleep(self.__queryInterval)
         self.queryServers(writeToJson, repeat=True)
         # Timer(queryInterval, self.queryServers, [writeToJson, True]).start()
         # # TODO: add stop() functionality
@@ -57,7 +59,7 @@ class QueryManager:
             self.writeToJson(self.__outputFile)
         print("\n--------Finished querying all servers--------\n")
         if repeat:
-            self.start(writeToJson)  # make the timer run periodically
+            self.start(queryInterval=self.__queryInterval, writeToJson=writeToJson)  # make the timer run periodically
 
 
     def __parseServerConstructors(self):
