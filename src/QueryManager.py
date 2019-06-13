@@ -2,6 +2,7 @@ from ServerQuerier import ServerQuerier
 
 import json
 from threading import Timer
+import time
 
 class QueryManager:
     """
@@ -30,8 +31,10 @@ class QueryManager:
         begin the timer to query a series of steam servers
         :param writeToJson:  boolean to specify if the gathered data should be written to a .json file
         """
-        Timer(queryInterval, self.queryServers, [writeToJson, True]).start()
-        # TODO: add stop() functionality
+        time.sleep(queryInterval)
+        self.queryServers(writeToJson, repeat=True)
+        # Timer(queryInterval, self.queryServers, [writeToJson, True]).start()
+        # # TODO: add stop() functionality
 
     def writeToJson(self, outputFile):
         with open(outputFile, "w") as outfile:
@@ -52,6 +55,7 @@ class QueryManager:
             self.__serverData["Server Data"].append(server.getAll())
         if writeToJson:
             self.writeToJson(self.__outputFile)
+        print("\n--------Finished querying all servers--------\n")
         if repeat:
             self.start(writeToJson)  # make the timer run periodically
 
