@@ -12,6 +12,7 @@ class ServerQuerier:
         self.__queryPort = int(queryPort)
         self.__name = name
         self.__game = game
+        self.__gameType = ""  # by default, do not display GameType
         self.__map = "Unknown Map"
         self.__currentPlayers = "?"
         self.__maxPlayers = "?"
@@ -25,6 +26,9 @@ class ServerQuerier:
 
     def getGame(self):
         return self.__game
+
+    def getGameType(self):
+        return self.__gameType
 
     def getMap(self):
         return self.__map
@@ -63,6 +67,7 @@ class ServerQuerier:
                 info = server.info()
                 self.__name = "{server_name}".format(**info)
                 self.__game = "{game}".format(**info)
+                self.__gameType = self.__decodeGameType("{server_tags}".format(**info))
                 self.__map = "{map}".format(**info)
                 self.__currentPlayers = "{player_count}".format(**info)
                 self.__maxPlayers = "{max_players}".format(**info)
@@ -110,8 +115,23 @@ class ServerQuerier:
         self.__dataDict["Player List"] = self.getPlayerList()
         print(self.__dataDict)
 
+    def __decodeGameType(self, encodedGameType):
+        """
+        python-valve does not correctly decode the returned GameType, so do it manually here
+        Example of encoded GameType:  "bTq1@H:500710000,C:523,B:0,N:Frontline,M:15001"
+        :param encodedGameType:  the encoded GameType string returned by server_tags
+        :return:  the decoded GameType
+        """
+        if "N:" not in encodedGameType:
+            return ""  # return no GameType rather than "Unknown Game Type". This is just a preference thing
+        else:
+            for field in encodedGameType.split(","):
+                if "N:" in field:
+                    return field.split(":")[1]
+            return ""
 
-# test = ServerQuerier("66.151.138.224:3170", 3172)
+
+# test = ServerQuerier("66.151.138.224:3175", 3177)
 # test.query()
 
 # TypeError: <valve.source.messages.PlayerEntry object at 0x0000026336EA4828> is not JSON serializable
