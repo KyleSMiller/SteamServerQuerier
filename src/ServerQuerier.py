@@ -110,6 +110,7 @@ class ServerQuerier:
         self.__dataDict["Status"] = "Online"
         self.__dataDict["Name"] = self.getName()
         self.__dataDict["Game"] = self.getGame()
+        self.__dataDict["Game Type"] = self.getGameType()
         self.__dataDict["Map"] = self.getMap()
         self.__dataDict["Population"] = self.getPopulation()
         self.__dataDict["Player List"] = self.getPlayerList()
