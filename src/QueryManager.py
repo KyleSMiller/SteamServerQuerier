@@ -12,7 +12,7 @@ class QueryManager:
     def __init__(self, serverConstructorFile, outputFile=None):
         self.__serverConstructorFile = serverConstructorFile
         self.__outputFile = outputFile
-        self.__serverData = {"Server Data": []}
+        self.__serverData = {}
         self.__queryInterval = 120
 
     def setQueryInterval(self, queryInterval):
@@ -50,11 +50,13 @@ class QueryManager:
         :param writeToJson:  boolean to specify if the gathered data should be written to a .json file
         :param repeat:  boolean for if the process should operate in a periodic timer. True will call start()
         """
-        servers = self.__parseServerConstructors()
-        self.__serverData["Server Data"] = []  # clear the file before adding new data
-        for server in servers:
-            server.query()
-            self.__serverData["Server Data"].append(server.getAll())
+        serverGroups = self.__parseServerConstructors()
+        self.__serverData = {}  # clear the file before adding new data
+        for serverGroupName, serverList in serverGroups.items():
+            for server in serverList:
+                server.query()
+                self.__serverData[serverGroupName] = []
+                self.__serverData[serverGroupName].append(server.getAll())
         if writeToJson:
             self.writeToJson(self.__outputFile)
         print("\n--------Finished querying all servers--------\n")
@@ -67,10 +69,13 @@ class QueryManager:
         Parse the .json server constructors and create ServerQuery objects from them
         :return:  a list of created ServerQuery objects
         """
-        servers = []
+        serverGroups = {}
         with open(self.__serverConstructorFile) as jsonFile:
             data = json.load(jsonFile)
-            for server in data["Server Constructors"]:
-                servers.append(ServerQuerier(server["IP"], server["Query Port"], server["Name"], game=server["Game"]))
-            jsonFile.close()
-        return servers
+            for serverGroup, servers in data.items():
+                serverGroups[serverGroup] = []  # add the server groups
+                for server in servers:
+                    serverGroups[serverGroup].append(ServerQuerier(server["IP"], server["Query Port"],
+                                                                   server["Name"], game=server["Game"]))
+                jsonFile.close()
+            return serverGroups
