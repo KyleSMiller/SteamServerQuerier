@@ -55,7 +55,8 @@ class QueryManager:
         for serverGroupName, serverList in serverGroups.items():
             for server in serverList:
                 server.query()
-                self.__serverData[serverGroupName] = []
+                if serverGroupName not in self.__serverData.keys():  # create a list for the server group if it does not exist
+                    self.__serverData[serverGroupName] = []
                 self.__serverData[serverGroupName].append(server.getAll())
         if writeToJson:
             self.writeToJson(self.__outputFile)
