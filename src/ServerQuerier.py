@@ -128,7 +128,7 @@ class ServerQuerier:
         else:
             for field in encodedGameType.split(","):
                 if "N:" in field:
-                    return field.split(":")[1]
+                    return field.split(":")[1] + " "  # just add an extra space to the end because I'm lazy
             return ""
 
 
