@@ -77,6 +77,7 @@ class QueryManager:
                 serverGroups[serverGroup] = []  # add the server groups
                 for server in servers:
                     serverGroups[serverGroup].append(ServerQuerier(server["IP"], server["Query Port"],
-                                                                   server["Name"], game=server["Game"]))
+                                                                   name=server["Name"], game=server["Game"],
+                                                                   nameOverride=server["NameOverride"], gameOverride=server["GameOverride"]))
                 jsonFile.close()
             return serverGroups

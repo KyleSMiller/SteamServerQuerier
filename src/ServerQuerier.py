@@ -6,12 +6,15 @@ class ServerQuerier:
     """
     Query a Steam Server and store the response in a dictionary
     """
-    def __init__(self, serverIP, queryPort, name="Unknown Steam Server", game="Unknown Game"):
+    def __init__(self, serverIP, queryPort, name="Unknown Steam Server", game="Unknown Game",
+                 nameOverride=False, gameOverride=False):
         self.__serverIP = (serverIP.split(":")[0] if ":" in serverIP else serverIP)
         self.__port = (serverIP.split(":")[1] if ":" in serverIP else None)
         self.__queryPort = int(queryPort)
         self.__name = name
         self.__game = game
+        self.__nameOverride = True if nameOverride == "True" else False
+        self.__gameOverride = True if gameOverride == "True" else False
         self.__gameType = ""  # by default, do not display GameType
         self.__map = "Unknown Map"
         self.__currentPlayers = "?"
@@ -65,8 +68,10 @@ class ServerQuerier:
         try:
             with valve.source.a2s.ServerQuerier(serverAddress) as server:
                 info = server.info()
-                self.__name = "{server_name}".format(**info)
-                self.__game = "{game}".format(**info)
+                if self.__nameOverride == False:
+                    self.__name = "{server_name}".format(**info)
+                if self.__gameOverride == False:
+                    self.__game = "{game}".format(**info)
                 self.__gameType = self.__decodeGameType("{server_tags}".format(**info))
                 self.__map = "{map}".format(**info)
                 self.__currentPlayers = "{player_count}".format(**info)
