@@ -1,4 +1,5 @@
 from ServerQuerier import ServerQuerier
+from ServerQuerierA2S import ServerQuerierA2S
 
 import json
 from threading import Timer
@@ -76,7 +77,7 @@ class QueryManager:
             for serverGroup, servers in data.items():
                 serverGroups[serverGroup] = []  # add the server groups
                 for server in servers:
-                    serverGroups[serverGroup].append(ServerQuerier(server["IP"], server["Query Port"],
+                    serverGroups[serverGroup].append(ServerQuerierA2S(server["IP"], server["Query Port"],
                                                                    name=server["Name"], game=server["Game"],
                                                                    nameOverride=server["NameOverride"], gameOverride=server["GameOverride"]))
                 jsonFile.close()

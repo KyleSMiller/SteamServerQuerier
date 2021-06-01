@@ -80,7 +80,8 @@ class ServerQuerier:
                     self.__playerList.append("{name}".format(**player))
             self.__writeToDictionary()
 
-        except valve.source.messages.BrokenMessageError:
+        except valve.source.messages.BrokenMessageError as err:
+            print(err)
             if self.__port is not None:
                 print("Server " + str(self.__serverIP) + ":" + str(self.__port) + " exists, but "
                       + str(self.__queryPort) + " is not the correct query port.")
