@@ -75,7 +75,7 @@ class ServerQuerierA2S:
             self.__currentPlayers = info.player_count
             self.__maxPlayers = info.max_players
             for player in a2s.players(serverAddress):
-                self.__playerList.append(player)
+                self.__playerList.append(player.name)
             self.__writeToDictionary()
 
         # except valve.source.messages.BrokenMessageError as err:
